@@ -123,3 +123,9 @@ Emoji guide can be found here on the [gimoji project site](https://gitmoji.carlo
    - In the description include all commit messages as changes -- the squash is coming
 
 It is also recommended to keep your pull request down to one specific issue or feature at a time.
+
+## WIKI & FAQ
+
+A [WIKI](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/) is available for the project and is moderatly managed.
+
+[FAQ information](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/FAQ) can be found [here](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/FAQ).
