@@ -11,7 +11,7 @@
 
 If there's SSH & Git, you can sync WordPress and Azure DevOps using git.
 
-Let your CI Pipeline mangage getting those plugin updates from your unix WordPres server.  
+Let your CI Pipeline mangage getting those plugin updates from your unix WordPress server.  
 
 <!-- markdownlint-disable -->
 #### Requirements:
