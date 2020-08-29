@@ -1,7 +1,8 @@
 # WordPress SSH Git CI
 
-**Creator** Ryan Valizan -- [@devnet](https://github.com/devnetkc)  
-**Tags:** git, WordPress, BASH, CI, Azure Azure DevOps, SiteGround, SSH, Azure Pipeline  
+**Creator:** Ryan Valizan -- [@devnet](https://github.com/devnetkc)  
+**Latest Release:** [v1.0.0](https://github.com/devnetkc/wordpress-ssh-git-ci/releases/tag/v1.0.0)  
+**Tags:** git, WordPress, Bash, ci, Azure Azure DevOps, SiteGround, SSH, Azure Pipeline  
 **License:** GPLv3  
 **License URI:** [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html)  
 
@@ -67,11 +68,11 @@ Emoji guide can be found here on the [gimoji project site](https://gitmoji.carlo
 
 #### Submitting a pull request
 
-1) Fork the repository [wordpress-ssh-git-ci](https://github.com/devnetkc)
-2) Create a new branch off of [master](https://github.com/devnetkc)
+1) Fork the repository [wordpress-ssh-git-ci](https://github.com/devnetkc/wordpress-ssh-git-ci)
+2) Create a new branch off of [master](https://github.com/devnetkc/wordpress-ssh-git-ci/tree/master)
 3) Make your changes
    - Commit messages not as important, but will help you in making your PR
-4) Create a [Pull Request](https://github.com/devnetkc) for your change into [master](https://github.com/devnetkc)
+4) Create a [Pull Request](https://github.com/devnetkc/wordpress-ssh-git-ci/pulls) for your change into [master](https://github.com/devnetkc/wordpress-ssh-git-ci/tree/master)
    - First line is `:emoji_name: what this pr does` > 100 characters
    - In the description include all commit messages as changes -- the squash is coming
 
