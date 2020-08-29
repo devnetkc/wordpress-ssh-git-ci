@@ -3,10 +3,6 @@
 # WordPress SSH Git CI Script
 # v1.0.0
 
-## ERROR CODES EXPLAINED
-### ERROR 2 = Missing required parameter option.
-### ERROR 3 = Stopping for human intervention.
-### ERROR 4 = Repository needs synced before it can pull changes.
 
 
 
