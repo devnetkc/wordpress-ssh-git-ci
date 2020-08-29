@@ -56,7 +56,7 @@ Classic Editor Example:
 
 Console Log:
 
-![WordPress-SSH-Git-CI](https://github.com/devnetkc/readme-assets/raw/master/Images/WordPress-SSH-Git-CI.png)
+![WordPress-SSH-Git-CI](https://user-images.githubusercontent.com/26221344/91645717-0eae4d80-ea0d-11ea-81d9-b1e072766767.png)
 
 <!-- markdownlint-disable -->
 #### Requirements:
