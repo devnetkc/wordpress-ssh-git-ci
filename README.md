@@ -14,6 +14,53 @@ If there's SSH & Git, you can sync WordPress and Azure DevOps using git.
 
 Let your CI Pipeline manage getting those plugin updates from your unix WordPress server.  
 
+#### Azure Pipeline
+
+
+#### Live WordPress Branch History
+
+![AzureHistory](https://github.com/devnetkc/readme-assets/raw/master/Images/WordPress-commit-history.png)
+
+### How To Use
+
+````cmd
+bash ~/wp-git-sync.sh \
+  -b sgLive \
+  -d sgStage \
+  -g $(DevOpsHost)wordpress-ssh-git-ci \
+  -p /home/username/public_html/wp-git-sync \
+  -t $(DevOpsToken) \
+  -u $(DevOpsTokenUser)
+````
+
+#### Azure Pipeline
+
+YAML Example:  
+*note: This example uses Azure Key store variables*
+
+````yaml
+steps:
+- task: SSH@0
+  displayName: pushChanges
+  inputs:
+    sshEndpoint: 'agent-to-siteground'
+    commands: 'bash ~/wp-git-sync.sh \
+    -b sgLive \
+    -d sgStage \
+    -g $(DevOpsHost)wordpress-ssh-git-ci \
+    -p /home/username/public_html/wp-git-sync \
+    -t $(DevOpsToken) \
+    -u $(DevOpsTokenUser)'
+````
+
+Classic Editor Example:
+
+![PipelineScreen](https://github.com/devnetkc/readme-assets/raw/master/Images/Azure-Pipeline-Example.png)
+
+Console Log:
+
+![WordPress-SSH-Git-CI](https://github.com/devnetkc/readme-assets/raw/master/Images/WordPress-SSH-Git-CI.png)
+
 <!-- markdownlint-disable -->
 #### Requirements:
 <!-- markdownlint-restore -->
