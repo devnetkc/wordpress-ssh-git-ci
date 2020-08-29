@@ -56,11 +56,13 @@ Contrabutions are welcome!
 
 ### Getting Started
 
-#### Roadmap
+#### [Kanban Roadmap Board](https://github.com/devnetkc/wordpress-ssh-git-ci/projects/1)
 
 This is a simple script project to automate a painful manual process I dealt with every day at the office. This gets a WordPress git repository on a unix server and Azure DevOps to play nice with one another.
 
 If you see some adjustments to make, by all means suggest them.  This needs some clean up and refactoring yet.
+
+New issues or requests will be tracked on the [kanban board](https://github.com/devnetkc/wordpress-ssh-git-ci/projects/1) for the project.
 
 #### Emoji's in commits
 
