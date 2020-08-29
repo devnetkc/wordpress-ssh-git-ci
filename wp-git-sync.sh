@@ -16,18 +16,64 @@ set_defaults() {
     fi
 }
 
+is_stashes() {
+    output=$(git stash list )
+    case $1 in
+        check) stashes=0;;
+    esac
+    case $output in
+        *+"stash"*)
+            stashes=1;;
+    esac
+}
+
 rm_devops_remote() {
     git remote rm devops 2>&1
     print_status_msg "Remote devops removed"
     git remote -v 2>&1
-    echo "end rm_devops_remote"
 }
 
 add_devops_remote() {
-    rm_devops_remote
     git remote add devops "https://${TOKENUSER}:${TOKEN}@${GITREPO}" 2>&1
     print_status_msg "Remote devops addded"
     git remote -v 2>&1
+}
+
+add_or_remove_devops() {
+    output=$(git remote )
+    case $output in
+        *+devops*)
+            remoteAdded=0;;
+        *)
+            remoteAdded=1;;
+    esac
+    case $1 in
+        add)
+            if [ $remoteAdded -eq 0 ] ; then
+                add_devops_remote
+            fi;;
+        rm) 
+             if [ $remoteAdded -eq 0 ] ; then
+                rm_devops_remote
+            fi;;
+    esac
+}
+
+git_stash() {
+    is_stashes "check"
+    if [ "$stashes" -eq 1 ] ; then
+        case $1 in
+            clear)
+                git stash clear 2>&1;;
+            pop)
+                git stash pop 2>&1;;
+            u)
+                git stash -u 2>&1;;
+            *)
+                git stash 2>&1;;
+        esac
+    fi
+    return
 }
 
 merge_from_devops() {
@@ -36,28 +82,28 @@ merge_from_devops() {
 }
 
 pull_from_devops() {
-    add_devops_remote
-    git stash clear 2>&1
-    git stash -u 2>&1
+    add_or_remove_devops "add"
+    git_stash "clear"
+    git_stash "u"
     git remote update 2>&1
     git checkout "${DEVBRANCH}" 2>&1
     git pull devops "${DEVBRANCH}" 2>&1
     git checkout "${BRANCH}" 2>&1
     git pull devops "${BRANCH}" 2>&1
     merge_from_devops
-    git stash pop 2>&1
+    git_stash "pop"
     commit_git
-    rm_devops_remote
+    add_or_remove_devops "rm"
     print_status_msg "pull_from_dev function was executed successfully."
 }
 
 push_to_devops() {
     # code
     pull_from_devops
-    add_devops_remote
+    add_or_remove_devops "add"
     git push devops "$BRANCH" 2>&1
     print_status_msg "push_to_dev function was executed successfully."
-    rm_devops_remote
+    add_or_remove_devops "rm"
 }
 
 print_status_msg() {
