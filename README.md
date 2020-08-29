@@ -11,13 +11,13 @@
 
 If there's SSH & Git, you can sync WordPress and Azure DevOps using git.
 
-Let your CI Pipeline mangage getting those plugin updates from your unix WordPress server.  
+Let your CI Pipeline manage getting those plugin updates from your unix WordPress server.  
 
 <!-- markdownlint-disable -->
 #### Requirements:
 <!-- markdownlint-restore -->
 
-- **Webserver have git capability** -- think this is the most important one
+- **Web server have git capability** -- think this is the most important one
 - A method to store your secrete variables such as
   - username
   - password/token
