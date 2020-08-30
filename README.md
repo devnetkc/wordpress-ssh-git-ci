@@ -2,6 +2,7 @@
 
 **Creator:** Ryan Valizan -- [@devnetkc](https://github.com/devnetkc)  
 **Latest Release:** [v1.0.1](https://github.com/devnetkc/wordpress-ssh-git-ci/releases/tag/v1.0.1)  
+**Wiki:** [How To Use](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki)  
 **Tags:** git, WordPress, Bash, ci, Azure Azure DevOps, SiteGround, SSH, Azure Pipeline  
 **License:** GPLv3  
 **License URI:** [https://www.gnu.org/licenses/gpl-3.0.en.html](https://www.gnu.org/licenses/gpl-3.0.en.html)  
@@ -14,7 +15,9 @@ If there's SSH & Git, you can sync WordPress and Azure DevOps using git.
 
 Let your CI Pipeline manage getting those plugin updates from your unix WordPress server.  
 
-#### Live WordPress Branch History
+If you like the project, don't forget to click the ⭐up top!
+
+#### 🔴 Live WordPress Branch History
 
 ![AzureHistory](https://raw.githubusercontent.com/devnetkc/readme-assets/master/Images/WordPress-commit-history.png)
 
@@ -30,7 +33,7 @@ bash ~/wp-git-sync.sh \
   -u $(DevOpsTokenUser)
 ````
 
-More information on the [arguments](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/How-To-Use#arguments) is available on the [WIKI](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki) page [__How to Use__](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/How-To-Use)
+More information on the [arguments](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/How-To-Use#arguments) is available on the [Wiki](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki) page [__How to Use__](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/How-To-Use)
 
 #### Azure Pipeline
 
@@ -126,8 +129,10 @@ Emoji guide can be found here on the [gimoji project site](https://gitmoji.carlo
 
 It is also recommended to keep your pull request down to one specific issue or feature at a time.
 
-## WIKI & FAQ
+## Wiki & FAQ
 
-A [WIKI](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/) is available for the project and is moderatly managed.
+A [Wiki](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/) is available for the project and is moderatly managed.
 
 [FAQ information](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/FAQ) can be found [here](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/FAQ).
+
+The [Kanban Roadmap Board](https://github.com/devnetkc/wordpress-ssh-git-ci/projects/1) is also available to track progress or see tasks in querie to be worked.
