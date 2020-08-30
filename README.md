@@ -15,7 +15,7 @@ If there's SSH & Git, you can sync WordPress and Azure DevOps using git.
 
 Let your CI Pipeline manage getting those plugin updates from your unix WordPress server.  
 
-If you like the project, don't forget to click the ⭐up top!
+If you like the project, don't forget to click the ⭐ up top!
 
 #### 🔴 Live WordPress Branch History
 
@@ -35,7 +35,7 @@ bash ~/wp-git-sync.sh \
 
 More information on the [arguments](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/How-To-Use#arguments) is available on the [Wiki](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki) page [__How to Use__](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/How-To-Use)
 
-#### 🔧Azure Pipeline
+#### 🔧 Azure Pipeline
 
 YAML Example:  
 *note: This example uses Azure Key store variables*
@@ -64,7 +64,7 @@ Console Log:
 ![WordPress-SSH-Git-CI](https://user-images.githubusercontent.com/26221344/91645717-0eae4d80-ea0d-11ea-81d9-b1e072766767.png)
 
 <!-- markdownlint-disable -->
-#### 🔲Requirements:
+#### 🔲 Requirements:
 <!-- markdownlint-restore -->
 
 - [ ] **Web server have git capability** -- think this is the most important one
@@ -76,7 +76,7 @@ Console Log:
 - [ ] Some kind of ci pipeline or `cron` job to hook into after a branch update event triggers an agent to run the script remotely
 
 <!-- markdownlint-disable -->
-#### 🚘What it has:
+#### 🚘 What it has:
 <!-- markdownlint-restore -->
 
 - Parameter options for dynamic use
@@ -117,7 +117,7 @@ New issues or requests will be tracked on the [kanban board](https://github.com/
 
 Emoji guide can be found here on the [gimoji project site](https://gitmoji.carloscuesta.me/).  Choose an emoji from the list provided above that fitst the fix or change you are submitting
 
-#### :twisted_rightwards_arrows: Submitting a pull request
+#### 🔀 Submitting a pull request
 
 1) Fork the repository [wordpress-ssh-git-ci](https://github.com/devnetkc/wordpress-ssh-git-ci)
 2) Create a new branch off of [master](https://github.com/devnetkc/wordpress-ssh-git-ci/tree/master)
