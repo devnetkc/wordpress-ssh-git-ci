@@ -16,7 +16,7 @@ Let your CI Pipeline manage getting those plugin updates from your unix WordPres
 
 #### Live WordPress Branch History
 
-![AzureHistory](https://github.com/devnetkc/readme-assets/raw/master/Images/WordPress-commit-history.png)
+![AzureHistory](https://raw.githubusercontent.com/devnetkc/readme-assets/master/Images/WordPress-commit-history.png)
 
 ### How To Use
 
@@ -29,6 +29,8 @@ bash ~/wp-git-sync.sh \
   -t $(DevOpsToken) \
   -u $(DevOpsTokenUser)
 ````
+
+More information on the [arguments](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/How-To-Use#arguments) is available on the [WIKI](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki) page [__How to Use__](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/How-To-Use)
 
 #### Azure Pipeline
 
@@ -52,7 +54,7 @@ steps:
 
 Classic Editor Example:
 
-![PipelineScreen](https://github.com/devnetkc/readme-assets/raw/master/Images/Azure-Pipeline-Example.png)
+![PipelineScreen](https://raw.githubusercontent.com/devnetkc/readme-assets/master/Images/Azure-Pipeline-Example.png)
 
 Console Log:
 
@@ -92,7 +94,7 @@ Console Log:
 
 ---
 
-Essentially, it allows WordPress developers to be more hands off with their shared hosting wordpress server backends, while still fully benefitting from any of the many source control repository and project board sites for git — but while using WordPress at the same time.
+Essentially, it allows WordPress developers to be more hands off with their shared hosting WordPress server backends, while still fully benefitting from any of the many source control repository and project board sites for git — but while using WordPress at the same time.
 
 ## Contributing
 
