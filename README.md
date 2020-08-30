@@ -21,7 +21,7 @@ If you like the project, don't forget to click the ⭐up top!
 
 ![AzureHistory](https://raw.githubusercontent.com/devnetkc/readme-assets/master/Images/WordPress-commit-history.png)
 
-### How To Use
+### 💻 How To Use
 
 ````cmd
 bash ~/wp-git-sync.sh \
@@ -35,7 +35,7 @@ bash ~/wp-git-sync.sh \
 
 More information on the [arguments](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/How-To-Use#arguments) is available on the [Wiki](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki) page [__How to Use__](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/How-To-Use)
 
-#### Azure Pipeline
+#### 🔧Azure Pipeline
 
 YAML Example:  
 *note: This example uses Azure Key store variables*
@@ -64,19 +64,19 @@ Console Log:
 ![WordPress-SSH-Git-CI](https://user-images.githubusercontent.com/26221344/91645717-0eae4d80-ea0d-11ea-81d9-b1e072766767.png)
 
 <!-- markdownlint-disable -->
-#### Requirements:
+#### 🔲Requirements:
 <!-- markdownlint-restore -->
 
-- **Web server have git capability** -- think this is the most important one
-- A method to store your secrete variables such as
+- [ ] **Web server have git capability** -- think this is the most important one
+- [ ] A method to store your secrete variables such as
   - username
   - password/token
-- SSH access to execute scripts on WordPress server
+- [ ] SSH access to execute scripts on WordPress server
   - *note: `cron` can serve as a slower alternative to SSH*
-- Some kind of CI pipeline or `cron` job to hook into after a branch update event triggers an agent to run the script remotely
+- [ ] Some kind of ci pipeline or `cron` job to hook into after a branch update event triggers an agent to run the script remotely
 
 <!-- markdownlint-disable -->
-#### What it has:
+#### 🚘What it has:
 <!-- markdownlint-restore -->
 
 - Parameter options for dynamic use
@@ -84,7 +84,7 @@ Console Log:
 - Is executed through an ssh call to your WordPress web server
 
 <!-- markdownlint-disable -->
-#### What it does is:
+#### 🚗 What it does is:
 <!-- markdownlint-restore -->
 
 - Check a git repo on a WordPress web server for changes
@@ -99,13 +99,13 @@ Console Log:
 
 Essentially, it allows WordPress developers to be more hands off with their shared hosting WordPress server backends, while still fully benefitting from any of the many source control repository and project board sites for git — but while using WordPress at the same time.
 
-## Contributing
+## 📈 Contributing
 
 Contrabutions are welcome!
 
-### Getting Started
+### 📚 Getting Started
 
-#### [Kanban Roadmap Board](https://github.com/devnetkc/wordpress-ssh-git-ci/projects/1)
+#### 📌 [Kanban Roadmap Board](https://github.com/devnetkc/wordpress-ssh-git-ci/projects/1)
 
 This is a simple script project to automate a painful manual process I dealt with every day at the office. This gets a WordPress git repository on a unix server and Azure DevOps to play nice with one another.
 
@@ -113,11 +113,11 @@ If you see some adjustments to make, by all means suggest them.  This needs some
 
 New issues or requests will be tracked on the [kanban board](https://github.com/devnetkc/wordpress-ssh-git-ci/projects/1) for the project.
 
-#### Emoji's in commits
+#### :bowtie: Emoji's in commits
 
 Emoji guide can be found here on the [gimoji project site](https://gitmoji.carloscuesta.me/).  Choose an emoji from the list provided above that fitst the fix or change you are submitting
 
-#### Submitting a pull request
+#### :twisted_rightwards_arrows: Submitting a pull request
 
 1) Fork the repository [wordpress-ssh-git-ci](https://github.com/devnetkc/wordpress-ssh-git-ci)
 2) Create a new branch off of [master](https://github.com/devnetkc/wordpress-ssh-git-ci/tree/master)
@@ -129,10 +129,10 @@ Emoji guide can be found here on the [gimoji project site](https://gitmoji.carlo
 
 It is also recommended to keep your pull request down to one specific issue or feature at a time.
 
-## Wiki & FAQ
+## ❓ Wiki & FAQ
 
 A [Wiki](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/) is available for the project and is moderatly managed.
 
 [FAQ information](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/FAQ) can be found [here](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/FAQ).
 
-The [Kanban Roadmap Board](https://github.com/devnetkc/wordpress-ssh-git-ci/projects/1) is also available to track progress or see tasks in querie to be worked.
+The [Kanban Roadmap Board](https://github.com/devnetkc/wordpress-ssh-git-ci/projects/1) is also available to track progress or see tasks in querie to be worked on.
