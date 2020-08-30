@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # WordPress SSH Git CI Script
-# v1.0.0
+# v1.0.1
 
 # Set argument parameters on start
 
