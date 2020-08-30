@@ -3,39 +3,35 @@
 # WordPress SSH Git CI Script
 # v1.0.0
 
+# Set argument parameters on start
 
+TOKENUSER="NONE"
+TOKEN="NONE"
 
-
-set_defaults() {
-    if [ -z "$GITPATH" ]; then
-        print_error_msg "-p is empty. Please provide a path to git directory for repository & try again."
-        exit 2
-    fi
-    if [ -z "$RUNTYPE" ]; then
-        RUNTYPE='push'
-    fi
-}
-
-is_stashes() {
-    output=$(git stash list )
-    case $1 in
-        check) stashes=0;;
+while getopts b:d:g:p:r:t:u: option; do
+    case "${option}" in
+        b) BRANCH=${OPTARG};;
+        d) DEVBRANCH=${OPTARG};;
+        g) GITREPO=${OPTARG};;
+        p) GITPATH=${OPTARG};;
+        r) RUNTYPE=${OPTARG};;
+        t) TOKEN=${OPTARG};;
+        u) TOKENUSER=${OPTARG};;
+        *) RUNTYPE="push";;
     esac
-    case $output in
-        *+"stash"*)
-            stashes=1;;
-    esac
+done
+
+# Remote connection methods
+
+add_devops_remote() {
+    git remote add devops "https://${TOKENUSER}:${TOKEN}@${GITREPO}" 2>&1
+    print_status_msg "Remote devops addded"
+    git remote -v 2>&1
 }
 
 rm_devops_remote() {
     git remote rm devops 2>&1
     print_status_msg "Remote devops removed"
-    git remote -v 2>&1
-}
-
-add_devops_remote() {
-    git remote add devops "https://${TOKENUSER}:${TOKEN}@${GITREPO}" 2>&1
-    print_status_msg "Remote devops addded"
     git remote -v 2>&1
 }
 
@@ -59,6 +55,21 @@ add_or_remove_devops() {
     esac
 }
 
+# Handling changes on WordPress server
+
+## Stashing changes
+
+is_stashes() {
+    output=$(git stash list )
+    case $1 in
+        check) stashes=0;;
+    esac
+    case $output in
+        *+"stash"*)
+            stashes=1;;
+    esac
+}
+
 git_stash() {
     is_stashes "check"
     if [ "$stashes" -eq 1 ] ; then
@@ -76,10 +87,23 @@ git_stash() {
     return
 }
 
+## Commit changes
+
+commit_git() {
+    git add -A . 2>&1
+    git commit -m "Server Side Commit
+
+This was commited from SiteGround during release push" 2>&1
+}
+
+## Merge changes
+
 merge_from_devops() {
     git merge "${DEVBRANCH}"  2>&1
     git branch -D "${DEVBRANCH}" 2>&1
 }
+
+# Pull from repository methods
 
 pull_from_devops() {
     add_or_remove_devops "add"
@@ -97,8 +121,9 @@ pull_from_devops() {
     print_status_msg "pull_from_dev function was executed successfully."
 }
 
+# Push to repository methods
+
 push_to_devops() {
-    # code
     pull_from_devops
     add_or_remove_devops "add"
     git push devops "$BRANCH" 2>&1
@@ -106,27 +131,18 @@ push_to_devops() {
     add_or_remove_devops "rm"
 }
 
-print_status_msg() {
-    printf "\033[32m%s\n" "$1"
+# Utilities
+
+set_defaults() {
+    if [ -z "$GITPATH" ]; then
+        print_error_msg "-p is empty. Please provide a path to git directory for repository & try again."
+        exit 2
+    fi
+    if [ -z "$RUNTYPE" ]; then
+        RUNTYPE='push'
+    fi
 }
 
-print_warning_msg() {
-    printf "\033[33m%s\n" "$1"
-}
-
-print_error_msg() {
-    printf "\033[31m%s\n" "$1"
-}
-
-commit_git() {
-    git add -A . 2>&1
-    git commit -m "Server Side Commit
-
-This was commited from SiteGround during release push" 2>&1
-}
-
-TOKEN="NONE"
-TOKENUSER="NONE"
 clean_repository() {
     # code
     if [ -n "$TOKEN" ] || [ "$TOKEN" != "NONE" ] || [ -n "$TOKENUSER" ] || [ "$TOKENUSER" != "NONE" ]; then
@@ -140,21 +156,24 @@ clean_repository() {
     fi
 }
 
+## Print messages in colored text
 
-while getopts b:d:g:p:r:t:u: option
-do
-case "${option}"
-in
-b) BRANCH=${OPTARG};;
-d) DEVBRANCH=${OPTARG};;
-g) GITREPO=${OPTARG};;
-p) GITPATH=${OPTARG};;
-r) RUNTYPE=${OPTARG};;
-t) TOKEN=${OPTARG};;
-u) TOKENUSER=${OPTARG};;
-*) RUNTYPE="push";;
-esac
-done
+### Greeen status message usually signifying success
+print_status_msg() {
+    printf "\033[32m%s\n" "$1"
+}
+
+### Yellow message usually signifying a warning message of some kind
+print_warning_msg() {
+    printf "\033[33m%s\n" "$1"
+}
+
+### Red message idicate that there was an error an action should be taken
+print_error_msg() {
+    printf "\033[31m%s\n" "$1"
+}
+
+# Methods and properties set, now start script logic models
 
 set_defaults
 
