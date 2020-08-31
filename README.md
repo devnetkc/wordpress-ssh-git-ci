@@ -101,7 +101,7 @@ Essentially, it allows WordPress developers to be more hands off with their shar
 
 ## 📈 Contributing
 
-Contrabutions are welcome! Learn morn on how to contribute on the [Wiki page](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/Contributing) or here or [CONTRIBUTING.md](https://github.com/devnetkc/wordpress-ssh-git-ci/blob/master/CONTRIBUTING.md).
+Contrabutions are welcome! Learn morn on how to contribute on the [Wiki page](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/Contributing) or here in [CONTRIBUTING.md](https://github.com/devnetkc/wordpress-ssh-git-ci/blob/master/CONTRIBUTING.md).
 
 ### 📌 [Kanban Roadmap Board](https://github.com/devnetkc/wordpress-ssh-git-ci/projects/1)
 
