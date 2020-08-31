@@ -39,9 +39,9 @@ add_or_remove_devops() {
     output=$(git remote )
     case $output in
         *+devops*)
-            remoteAdded=0;;
-        *)
             remoteAdded=1;;
+        *)
+            remoteAdded=0;;
     esac
     case $1 in
         add)
