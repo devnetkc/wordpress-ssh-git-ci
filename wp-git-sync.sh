@@ -8,20 +8,21 @@ BRANCH=live
 DEVBRANCH=dev
 STAGEBRANCH=stage
 PROJDIR=wordpress
+SOFTERROR=0
 ERRORMESSAGES=""
 while :; do
     case "$1" in
 
         -b|--branch) #optional
-            if [ "$2" ]; then
+            if [[ $2 ]]; then
                 BRANCH=$2 
                 shift
             else
-                ERRORMESSAGES+="${ERRORMESSAGES} ERROR: '-b | --branch' requires a non-empty option argument."
+                ERRORMESSAGES="${ERRORMESSAGES} ERROR: '-b | --branch' requires a non-empty option argument."
             fi
             ;;
         -c|--commit) #optional -- default value is true
-            if [ "$2" ] && \( [ "$2" = "no" ] || [ "$2" = "n" ] \); then
+            if [[ $2 ]] && [[ $2 = "no" ||  $2 = "n" ]] ; then
                 COMMIT=0
                 shift
             else
@@ -30,59 +31,59 @@ while :; do
             fi
             ;;            
         -d|--devbranch) #optional
-            if [ "$2" ]; then
+            if [[ $2 ]]; then
                 DEVBRANCH=$2
                 shift
             else
-                ERRORMESSAGES+="ERROR: '-d | --devbranch' requires a non-empty option argument."
+                ERRORMESSAGES="ERROR: '-d | --devbranch' requires a non-empty option argument."
             fi
             ;;
         -f|--fullorigin) #optional
-            if [ "$2" ]; then
+            if [[ $2 ]]; then
                 ORIGIN=$2
                 shift
             else
-                ERRORMESSAGES+="ERROR: '-f | --fullorigin' requires a non-empty option argument."
+                ERRORMESSAGES="ERROR: '-f | --fullorigin' requires a non-empty option argument."
             fi
             ;;
         -g|--gitrepo) #semi-optional -- if empty ORIGIN string is required
-            if [ "$2" ]; then
+            if [[ $2 ]]; then
                 GITREPO=$2
                 shift
             else
-                ERRORMESSAGES+="ERROR: '-g | --gitrepo' requires a non-empty option argument."
+                ERRORMESSAGES="ERROR: '-g | --gitrepo' requires a non-empty option argument."
             fi
             ;;
         -m|--message) #optional
-            if [ "$2" ]; then
+            if [[ $2 ]]; then
                 MESSAGE=$2
                 shift
             else
-                ERRORMESSAGES+="ERROR: '-m | --message' requires a non-empty option argument."
+                ERRORMESSAGES="ERROR: '-m | --message' requires a non-empty option argument."
             fi
             ;;
         -o|--onchange) #optional
-            if [ "$2" ]; then
+            if [[ $2 ]]; then
                 ONCHANGE=$2
                 shift
             else
-                ERRORMESSAGES+="ERROR: '-o | --onchange' requires a non-empty option argument."
+                ERRORMESSAGES="ERROR: '-o | --onchange' requires a non-empty option argument."
             fi
             ;;
         -p|--projectdir) #optional
-            if [ "$2" ]; then
+            if [[ $2 ]]; then
                 PROJDIR=$2
                 shift
             else
-                ERRORMESSAGES+="ERROR: '-p | --projectdir' requires a non-empty option argument."
+                ERRORMESSAGES="ERROR: '-p | --projectdir' requires a non-empty option argument."
             fi
             ;;
         -s|--stagebranch) #optional
-            if [ "$2" ]; then
+            if [[ $2 ]]; then
                 STAGEBRANCH=$2
                 shift
             else
-                ERRORMESSAGES+="ERROR: '-s | --stagebranch' requires a non-empty option argument."
+                ERRORMESSAGES="ERROR: '-s | --stagebranch' requires a non-empty option argument."
             fi
             ;;
         -se|--softerror) #optional
@@ -90,31 +91,26 @@ while :; do
             shift
             ;;
         -t|--token) #semi-optional -- if empty ORIGIN string is required
-            if [ "$2" ]; then
+            if [[ $2 ]]; then
                 TOKEN=$2
                 shift
             else
-                ERRORMESSAGES+="ERROR: '-t | --token' requires a non-empty option argument."
+                ERRORMESSAGES="ERROR: '-t | --token' requires a non-empty option argument."
             fi
             ;;
         -u|--tokenuser) #semi-optional -- if empty ORIGIN string is required
-            if [ "$2" ]; then
+            if [[ $2 ]]; then
                 TOKENUSER=$2
                 shift
             else
-                ERRORMESSAGES+="ERROR: '-u | --tokenuser' requires a non-empty option argument."
+                ERRORMESSAGES="ERROR: '-u | --tokenuser' requires a non-empty option argument."
             fi
             ;;
         --)
             shift
             break
             ;;
-        *) 
-        if [ "$1" ] ; then
-            ORIGIN=$1 #semi-optional -- if ORIGIN is not set, these must be set: TOKEN - TOKENUSER - GITREPO 
-        else
-            ERRORMESSAGES+="ERROR: you must provide at least an origin path."
-        fi
+        *)
         break
     esac
     shift
@@ -186,7 +182,7 @@ is_stashes() {
 
 git_stash() {
     is_stashes "check"
-    if [ "$stashes" -eq 1 ] ; then
+    if [[ $stashes -eq 1 ]] ; then
         case $1 in
             clear)
                 git stash clear 2>&1;;
@@ -204,7 +200,7 @@ git_stash() {
 ## Committing changes
 
 commit_git() {
-    if [ "$COMMIT" -eq 1 ] ; then
+    if [[ $COMMIT -eq 1 ]] ; then
         git add -A . 2>&1
         git commit -m "$MESSAGE" 2>&1
         print_status_msg "Commited on $BRANCH with message:
@@ -220,12 +216,12 @@ pull_branch() {
     msg="Pull branch "
     if [ -z "$2" ] ; then
         git pull "$1" 2>&1
-        msg+=$1
+        msg=$msg$1
     else
         git pull devops "$2" 2>&1
-        msg+=$2
+        msg=$msg$2
     fi
-    print_status_msg "${msg} is complete."
+    print_status_msg "$msg is complete."
 }
 
 ## Push branch to remote
@@ -235,12 +231,12 @@ push_branch() {
     msg="Push branch "
     if [ -z "$2" ] ; then
         git push "$1" 2>&1
-        msg+=$1
+        msg=$msg$1
     else
         git push devops "$2" 2>&1
-        msg+=$2
+        msg=$msg$2
     fi
-    print_status_msg "${msg} is complete."
+    print_status_msg "$msg is complete."
 }
 
 # Utilities
@@ -266,14 +262,14 @@ set_defaults() {
     # Set origin url to use
     if [ -z "$ORIGIN" ] ; then
         # if origin isn't set and the other arguments needed to make an origin aren't set, throw an error!
-        if [ -z "$TOKENUSER" ] || [ -z "$TOKEN" ] || [ -z "$GITREPO" ] ; then
+        if [[ -z $TOKENUSER || -z $TOKEN || -z $GITREPO ]] ; then
             error3
         fi
         ORIGIN="https://${TOKENUSER}:${TOKEN}@${GITREPO}"
     fi
 
     # Set the default commit message
-    if [ -z "$MESSAGE" ]; then
+    if [[ -z $MESSAGE ]]; then
         MESSAGE="Server Side Commit
         
         This was commited from the WordPress server"
@@ -283,10 +279,10 @@ set_defaults() {
     if output=$(git status --untracked-files=no --porcelain) && [ -z "$output" ] ; then
         DIRTYBRANCH=0
     else
-        if [ "$ONCHANGE" = "Stop" ] || [ "$ONCHANGE" = "stop" ] ; then
+        if [[ $ONCHANGE = "Stop" || $ONCHANGE = "stop" ]] ; then
             error3
         else
-            if [ -n "$ONCHANGE" ] && \( [ "$ONCHANGE" != "commit" ] || [ "$ONCHANGE" != "Commit" ] \); then
+            if [[ -n $ONCHANGE ]] && [[ $ONCHANGE != "commit" && $ONCHANGE != "Commit" ]]; then
                 print_error_msg '-o or --onchange has an incorrect value.  Please use commit or stop for your selection.  If you leave it blank, commit is the default.'
                 error3
             else
@@ -360,9 +356,8 @@ print_error_msg() {
 
 # Methods and properties set, now start script logic models
 
-set_defaults
-
 cd "$PROJDIR" || exit 1
+set_defaults
 
 add_or_remove_devops "add"
 
