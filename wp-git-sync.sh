@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # WordPress SSH Git CI Script
-# v1.1.0
+# v1.0.2
 
 # Set argument parameters on start
 BRANCH=live
 DEVBRANCH=dev
 STAGEBRANCH=stage
 PROJDIR=wordpress
-SOFTERROR=0
 ERRORMESSAGES=""
+TRACKEDONLY="false"
+COMMIT="true"
 while :; do
     case "$1" in
 
@@ -22,11 +23,11 @@ while :; do
             fi
             ;;
         -c|--commit) #optional -- default value is true
-            if [[ $2 ]] && [[ $2 = "no" ||  $2 = "n" ]] ; then
-                COMMIT=0
+            if [[ $2 = "no" ||  $2 = "n" ]] ; then
+                COMMIT="false"
                 shift
             else
-                COMMIT=1
+                COMMIT="true"
                 shift
             fi
             ;;            
@@ -87,7 +88,7 @@ while :; do
             fi
             ;;
         -se|--softerror) #optional
-            SOFTERROR=1
+            SOFTERROR="true"
             shift
             ;;
         -t|--token) #semi-optional -- if empty ORIGIN string is required
@@ -97,6 +98,10 @@ while :; do
             else
                 ERRORMESSAGES="ERROR: '-t | --token' requires a non-empty option argument."
             fi
+            ;;
+        -tr|--tracked) #optional
+            TRACKEDONLY="true"
+            shift
             ;;
         -u|--tokenuser) #semi-optional -- if empty ORIGIN string is required
             if [[ $2 ]]; then
@@ -135,17 +140,17 @@ add_or_remove_devops() {
     output=$(git remote )
     case $output in
         *+devops*)
-            remoteAdded=1;;
+            remoteAdded="true";;
         *)
-            remoteAdded=0;;
+            remoteAdded="false";;
     esac
     case $1 in
         add)
-            if [ $remoteAdded -eq 0 ] ; then
+            if [ $remoteAdded == "false" ] ; then
                 add_devops_remote
             fi;;
         rm) 
-             if [ $remoteAdded -eq 0 ] ; then
+             if [ $remoteAdded == "true" ] ; then
                 rm_devops_remote
             fi;;
     esac
@@ -182,7 +187,7 @@ is_stashes() {
 
 git_stash() {
     is_stashes "check"
-    if [[ $stashes -eq 1 ]] ; then
+    if [[ $stashes == "true" ]] ; then
         case $1 in
             clear)
                 git stash clear 2>&1;;
@@ -200,7 +205,7 @@ git_stash() {
 ## Committing changes
 
 commit_git() {
-    if [[ $COMMIT -eq 1 ]] ; then
+    if [[ $COMMIT == "commit" ]] ; then
         git add -A . 2>&1
         git commit -m "$MESSAGE" 2>&1
         print_status_msg "Commited on $BRANCH with message:
@@ -212,9 +217,22 @@ commit_git() {
 
 ## Pull branch from remote
 
+create_or_rm_branch() {
+    case $1 in
+        add)
+            if [[ $remoteAdded == "true" ]] ; then
+                add_devops_remote
+            fi;;
+        rm) 
+             if [[ $remoteAdded == "true" ]] ; then
+                rm_devops_remote
+            fi;;
+    esac
+}
+
 pull_branch() {
     msg="Pull branch "
-    if [ -z "$2" ] ; then
+    if [[ -z $2 ]] ; then
         git pull "$1" 2>&1
         msg=$msg$1
     else
@@ -260,7 +278,7 @@ set_defaults() {
     throw_errors
 
     # Set origin url to use
-    if [ -z "$ORIGIN" ] ; then
+    if [[ -z $ORIGIN ]] ; then
         # if origin isn't set and the other arguments needed to make an origin aren't set, throw an error!
         if [[ -z $TOKENUSER || -z $TOKEN || -z $GITREPO ]] ; then
             error3
@@ -276,8 +294,14 @@ set_defaults() {
     fi
 
     # Set if branch has changes; and if so, how to handle those changes
-    if output=$(git status --untracked-files=no --porcelain) && [ -z "$output" ] ; then
-        DIRTYBRANCH=0
+    if [[ $TRACKEDONLY == "true" ]] ; then
+        output=$(git status --untracked-files=no --porcelain)
+    else
+        output=$(git status --porcelain)
+    fi
+        
+    if [ -z "$output" ] ; then
+        DIRTYBRANCH="false"
     else
         if [[ $ONCHANGE = "Stop" || $ONCHANGE = "stop" ]] ; then
             error3
@@ -287,7 +311,7 @@ set_defaults() {
                 error3
             else
                 ONCHANGE="commit"
-                DIRTYBRANCH=1
+                DIRTYBRANCH="true"
             fi
         fi
     fi
@@ -296,6 +320,7 @@ set_defaults() {
 # Method models
 
 get_new_release() {
+    print_status_msg "Getting latest release now"
     # Checkout staging release branch
     checkout_branch "$STAGEBRANCH"
 
@@ -314,6 +339,7 @@ get_new_release() {
 
 clean_repository() {
     # Stash changes
+    print_status_msg "Stashing changes"
     git_stash "clear"
     git_stash "u"
 
@@ -321,18 +347,19 @@ clean_repository() {
     get_new_release
 
     # Add changes back
+    print_status_msg "Finished updating, adding changes back"
     git_stash "pop"
 
     # If soft error isn't enabled, add files and commit them
-    if [ $SOFTERROR -eq 0 ] ; then
+    if [ $SOFTERROR == "false" ] ; then
         commit_git
+        # Push changes back to dev branch
+        push_branch "devops" "$DEVBRANCH"
     else
         print_error_msg "Changes on server, soft error selected. Release is pulled, changes are popped back, branch is waiting user intervention."
         error3
     fi
 
-    # Push changes back to dev branch
-    push_branch "devops" "$DEVBRANCH"
 
     print_status_msg "Changes on the WordPress site have been commited, and were pushed to $DEVBRANCH branch"
 }
@@ -363,7 +390,7 @@ add_or_remove_devops "add"
 
 # Option selected to just query for changes
 
-if [ $DIRTYBRANCH -eq 0 ] ; then
+if [[ $DIRTYBRANCH == "true" ]] ; then
   # Working directory clean
   print_status_msg "Working directory clean"
   get_new_release
