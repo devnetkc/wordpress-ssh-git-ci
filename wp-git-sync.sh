@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # WordPress SSH Git CI Script
-# v1.0.2
+# v1.2.0
 
 # Set argument parameters on start
 BRANCH=live
@@ -11,9 +11,10 @@ PROJDIR=wordpress
 ERRORMESSAGES=""
 TRACKEDONLY="false"
 COMMIT="true"
+SOFTERROR="false"
+FETCH="false"
 while :; do
     case "$1" in
-
         -b|--branch) #optional
             if [[ $2 ]]; then
                 BRANCH=$2 
@@ -23,11 +24,8 @@ while :; do
             fi
             ;;
         -c|--commit) #optional -- default value is true
-            if [[ $2 = "no" ||  $2 = "n" ]] ; then
+            if [[ $2 == "no" ||  $2 == "n" ]] ; then
                 COMMIT="false"
-                shift
-            else
-                COMMIT="true"
                 shift
             fi
             ;;            
@@ -39,7 +37,11 @@ while :; do
                 ERRORMESSAGES="ERROR: '-d | --devbranch' requires a non-empty option argument."
             fi
             ;;
-        -f|--fullorigin) #optional
+        -fe|--fetch) #optional
+            FETCH="true"
+            shift
+            ;;
+        -fo|--fullorigin) #optional
             if [[ $2 ]]; then
                 ORIGIN=$2
                 shift
@@ -71,7 +73,7 @@ while :; do
                 ERRORMESSAGES="ERROR: '-o | --onchange' requires a non-empty option argument."
             fi
             ;;
-        -p|--projectdir) #optional
+        -pd|--projectdir) #optional
             if [[ $2 ]]; then
                 PROJDIR=$2
                 shift
@@ -79,7 +81,7 @@ while :; do
                 ERRORMESSAGES="ERROR: '-p | --projectdir' requires a non-empty option argument."
             fi
             ;;
-        -s|--stagebranch) #optional
+        -sb|--stagebranch) #optional
             if [[ $2 ]]; then
                 STAGEBRANCH=$2
                 shift
@@ -91,7 +93,7 @@ while :; do
             SOFTERROR="true"
             shift
             ;;
-        -t|--token) #semi-optional -- if empty ORIGIN string is required
+        -to|--token) #semi-optional -- if empty ORIGIN string is required
             if [[ $2 ]]; then
                 TOKEN=$2
                 shift
@@ -124,35 +126,39 @@ done
 # Remote connection methods
 
 add_devops_remote() {
-    git remote add devops "$ORIGIN" 2>&1
-    git remote update 2>&1
-    git remote -v 2>&1
+    git remote add devops "$ORIGIN"
+    git remote update devops 2>&1
     print_status_msg "Remote devops addded"
 }
 
 rm_devops_remote() {
-    git remote rm devops 2>&1
-    git remote -v 2>&1
+    git remote rm devops
     print_status_msg "Remote devops removed"
 }
 
 add_or_remove_devops() {
     output=$(git remote )
     case $output in
-        *+devops*)
-            remoteAdded="true";;
+        *devops*)
+            print_warning_msg "Remote DevOps found"
+            remoteAdded="true"
+            ;;
         *)
-            remoteAdded="false";;
+            print_warning_msg "Remote DevOps not found"
+            remoteAdded="false"
+            ;;
     esac
     case $1 in
         add)
-            if [ $remoteAdded == "false" ] ; then
+            if [[ $remoteAdded == "false" ]] ; then
                 add_devops_remote
-            fi;;
+            fi
+            ;;
         rm) 
-             if [ $remoteAdded == "true" ] ; then
+             if [[ $remoteAdded == "true" ]] ; then
                 rm_devops_remote
-            fi;;
+            fi
+            ;;
     esac
 }
 
@@ -161,7 +167,11 @@ add_or_remove_devops() {
 ## Branches
 
 checkout_branch() {
-    if [ -z "$2" ] ; then
+    if [[ "$3" ]] ; then
+        git checkout -B "$DEVBRANCH" "devops/$DEVBRANCH" 2>&1
+        return
+    fi
+    if [[ -z "$2" ]] ; then
         git checkout "$1" 2>&1
     else
         git checkout devops "$2" 2>&1
@@ -169,19 +179,25 @@ checkout_branch() {
 }
 
 rm_branch() {
-    git branch -D "$1"
+    git branch -D "$1" 2>&1
 }
 
+go_live() {
+    git checkout -B "$BRANCH" 2>&1
+    if [[ $1 ]] ; then
+        rm_branch "$1"
+    fi
+}
 ## Stashes
 
 is_stashes() {
     output=$(git stash list )
     case $1 in
-        check) stashes=0;;
+        check) stashes="false";;
     esac
     case $output in
-        *+"stash"*)
-            stashes=1;;
+        *"stash"*)
+            stashes="true";;
     esac
 }
 
@@ -205,10 +221,11 @@ git_stash() {
 ## Committing changes
 
 commit_git() {
-    if [[ $COMMIT == "commit" ]] ; then
+    if [[ $COMMIT == "true" ]] ; then
+        checkout_branch "devops" "$DEVBRANCH" "true"
         git add -A . 2>&1
-        git commit -m "$MESSAGE" 2>&1
-        print_status_msg "Commited on $BRANCH with message:
+        git commit -a -m "$MESSAGE"
+        print_status_msg "Commited on $DEVBRANCH with message:
         $MESSAGE"
     else 
         print_status_msg "$BRANCH changes were not commited"
@@ -217,27 +234,14 @@ commit_git() {
 
 ## Pull branch from remote
 
-create_or_rm_branch() {
-    case $1 in
-        add)
-            if [[ $remoteAdded == "true" ]] ; then
-                add_devops_remote
-            fi;;
-        rm) 
-             if [[ $remoteAdded == "true" ]] ; then
-                rm_devops_remote
-            fi;;
-    esac
-}
-
 pull_branch() {
     msg="Pull branch "
-    if [[ -z $2 ]] ; then
-        git pull "$1" 2>&1
-        msg=$msg$1
-    else
-        git pull devops "$2" 2>&1
+    if [[ $2 ]] ; then
+        output=$(git pull "$1/$2")
         msg=$msg$2
+    else
+        git pull devops "$1" 2>&1
+        msg=$msg$1
     fi
     print_status_msg "$msg is complete."
 }
@@ -247,7 +251,7 @@ pull_branch() {
 
 push_branch() {
     msg="Push branch "
-    if [ -z "$2" ] ; then
+    if [[ -z "$2" ]] ; then
         git push "$1" 2>&1
         msg=$msg$1
     else
@@ -265,7 +269,7 @@ error3() {
 }
 
 throw_errors() {
-    if [ ${#ERRORMESSAGES} -gt 0 ] ; then
+    if [[ ${#ERRORMESSAGES} -gt 0 ]] ; then
         for ERRORMSG in ${ERRORMESSAGES}; do
             print_error_msg "${ERRORMSG}"
         done
@@ -300,7 +304,7 @@ set_defaults() {
         output=$(git status --porcelain)
     fi
         
-    if [ -z "$output" ] ; then
+    if [[ -z $output ]] ; then
         DIRTYBRANCH="false"
     else
         if [[ $ONCHANGE = "Stop" || $ONCHANGE = "stop" ]] ; then
@@ -319,23 +323,31 @@ set_defaults() {
 
 # Method models
 
+dev_branch_push() {
+    output=$(git branch --show-current )
+    case $output in
+        *"dev"*)
+            push_branch "devops" "$DEVBRANCH";;
+    esac
+}
+
 get_new_release() {
+    if [[ $FETCH == "true" ]]; then
+        return;
+    fi
     print_status_msg "Getting latest release now"
+
+    # Check if branch is on dev branch
+    # If so, exit 
     # Checkout staging release branch
     checkout_branch "$STAGEBRANCH"
 
     # Pull new release changes
-    pull_branch "devops" "$STAGEBRANCH"
+    pull_branch "$STAGEBRANCH"
 
-    # Remove the previous live branch
-    rm_branch "$BRANCH"
-
-    # Re-create and checkout a live branch, based on the staging release branch
-    git branch "$BRANCH" 2>&1
-    checkout_branch "$BRANCH"
-
+    # Checkout a live branch, based on the staging release branch
+    go_live
 }
-
 
 clean_repository() {
     # Stash changes
@@ -345,13 +357,18 @@ clean_repository() {
 
     # Get latest release from Azure DevOps
     get_new_release
-
+    
     # Add changes back
     print_status_msg "Finished updating, adding changes back"
+
+    # Switching to dev branch to add changes
+    checkout_branch "devops" "$DEVBRANCH" "true"
+    pull_branch "$STAGEBRANCH"
+    # Pop changes back in
     git_stash "pop"
 
     # If soft error isn't enabled, add files and commit them
-    if [ $SOFTERROR == "false" ] ; then
+    if [[ $SOFTERROR == "false" ]] ; then
         commit_git
         # Push changes back to dev branch
         push_branch "devops" "$DEVBRANCH"
@@ -360,6 +377,8 @@ clean_repository() {
         error3
     fi
 
+    # Create new live
+    go_live "$DEVBRANCH"
 
     print_status_msg "Changes on the WordPress site have been commited, and were pushed to $DEVBRANCH branch"
 }
@@ -390,10 +409,12 @@ add_or_remove_devops "add"
 
 # Option selected to just query for changes
 
-if [[ $DIRTYBRANCH == "true" ]] ; then
-  # Working directory clean
-  print_status_msg "Working directory clean"
-  get_new_release
+if [[ $DIRTYBRANCH == "false" ]] ; then
+    # Make sure it's not missing a push back
+    dev_branch_push
+    # Working directory clean
+    print_status_msg "Working directory clean"
+    get_new_release
 else 
     print_warning_msg "Uncommitted changes! Starting to clean..."
     clean_repository
