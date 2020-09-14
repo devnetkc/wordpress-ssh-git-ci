@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # WordPress SSH Git CI Script
-# v1.2.0
+# v1.2.1
 
 # Set argument parameters on start
 BRANCH=live
@@ -324,7 +324,7 @@ set_defaults() {
 # Method models
 
 dev_branch_push() {
-    output=$(git branch --show-current )
+    output=$(git symbolic-ref --short HEAD )
     case $output in
         *"dev"*)
             push_branch "devops" "$DEVBRANCH";;
@@ -332,6 +332,9 @@ dev_branch_push() {
 }
 
 get_new_release() {
+    # Make sure it's not missing a push back
+    dev_branch_push
+    
     if [[ $FETCH == "true" ]]; then
         return;
     fi
@@ -377,9 +380,6 @@ clean_repository() {
         error3
     fi
 
-    # Create new live
-    go_live "$DEVBRANCH"
-
     print_status_msg "Changes on the WordPress site have been commited, and were pushed to $DEVBRANCH branch"
 }
 
@@ -410,8 +410,6 @@ add_or_remove_devops "add"
 # Option selected to just query for changes
 
 if [[ $DIRTYBRANCH == "false" ]] ; then
-    # Make sure it's not missing a push back
-    dev_branch_push
     # Working directory clean
     print_status_msg "Working directory clean"
     get_new_release
