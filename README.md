@@ -1,7 +1,7 @@
 # WordPress SSH Git CI
 
 **Creator:** Ryan Valizan -- [@devnetkc](https://github.com/devnetkc)  
-**Latest Release:** [v1.2.0](https://github.com/devnetkc/wordpress-ssh-git-ci/releases/tag/v1.2.0)  
+**Latest Release:** [v1.2.1](https://github.com/devnetkc/wordpress-ssh-git-ci/releases/tag/v1.2.1)  
 **Wiki:** [How To Use](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki)  
 **Tags:** git, WordPress, Bash, ci, Azure Azure DevOps, SiteGround, SSH, Azure Pipeline  
 **License:** GPLv3  
