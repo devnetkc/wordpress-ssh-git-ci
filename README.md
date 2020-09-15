@@ -89,7 +89,7 @@ steps:
 
 Classic Editor Example:
 
-![PipelineScreen](https://github.com/devnetkc/readme-assets/raw/master/Images/WordPress-SSH-Git-CI-Azure-DevOps-Pipeline-fetch.png)
+![PipelineScreen](https://github.com/devnetkc/readme-assets/raw/master/Images/WordPress-SSH-Git-CI-Azure-DevOps-Pipeline.png)
 
 Console Log:
 
@@ -131,11 +131,11 @@ steps:
 
 Classic Editor Example:
 
-![PipelineScreen](https://github.com/devnetkc/readme-assets/raw/master/Images/WordPress-SSH-Git-CI-Azure-DevOps-Pipeline.png)
+![PipelineScreen](https://github.com/devnetkc/readme-assets/raw/master/Images/WordPress-SSH-Git-CI-Azure-DevOps-Pipeline-fetch.png)
 
 Console Log:
 
-![WordPress-SSH-Git-CI](https://user-images.githubusercontent.com/26221344/93008582-fc1f3280-f53b-11ea-831c-751cc00a2d3b.png)
+![WordPress-SSH-Git-CI](https://user-images.githubusercontent.com/26221344/93008605-296be080-f53c-11ea-959c-23cfe2ac072f.png)
 
 ## [📈 Contributing](https://github.com/devnetkc/wordpress-ssh-git-ci/wiki/Contributing)
 
