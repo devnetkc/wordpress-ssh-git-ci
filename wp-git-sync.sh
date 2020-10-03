@@ -128,23 +128,23 @@ done
 add_devops_remote() {
     git remote add devops "$ORIGIN"
     git remote update devops 2>&1
-    print_status_msg "Remote devops addded"
+    log status "Remote devops addded"
 }
 
 rm_devops_remote() {
     git remote rm devops
-    print_status_msg "Remote devops removed"
+    log status "Remote devops removed"
 }
 
 add_or_remove_devops() {
     output=$(git remote )
     case $output in
         *devops*)
-            print_warning_msg "Remote DevOps found"
+            log warning "Remote DevOps found"
             remoteAdded="true"
             ;;
         *)
-            print_warning_msg "Remote DevOps not found"
+            log warning "Remote DevOps not found"
             remoteAdded="false"
             ;;
     esac
@@ -225,10 +225,10 @@ commit_git() {
         checkout_branch "devops" "$DEVBRANCH" "true"
         git add -A . 2>&1
         git commit -a -m "$MESSAGE"
-        print_status_msg "Commited on $DEVBRANCH with message:
+        log status "Commited on $DEVBRANCH with message:
         $MESSAGE"
     else 
-        print_status_msg "$BRANCH changes were not commited"
+        log status "$BRANCH changes were not commited"
     fi
 }
 
@@ -243,7 +243,7 @@ pull_branch() {
         git pull devops "$1" 2>&1
         msg=$msg$1
     fi
-    print_status_msg "$msg is complete."
+    log status "$msg is complete."
 }
 
 ## Push branch to remote
@@ -258,7 +258,7 @@ push_branch() {
         git push devops "$2" 2>&1
         msg=$msg$2
     fi
-    print_status_msg "$msg is complete."
+    log status "$msg is complete."
 }
 
 # Utilities
@@ -271,7 +271,7 @@ error3() {
 throw_errors() {
     if [[ ${#ERRORMESSAGES} -gt 0 ]] ; then
         for ERRORMSG in ${ERRORMESSAGES}; do
-            print_error_msg "${ERRORMSG}"
+            log error "${ERRORMSG}"
         done
         error3
     fi
@@ -311,7 +311,7 @@ set_defaults() {
             error3
         else
             if [[ -n $ONCHANGE ]] && [[ $ONCHANGE != "commit" && $ONCHANGE != "Commit" ]]; then
-                print_error_msg '-o or --onchange has an incorrect value.  Please use commit or stop for your selection.  If you leave it blank, commit is the default.'
+                log error '-o or --onchange has an incorrect value.  Please use commit or stop for your selection.  If you leave it blank, commit is the default.'
                 error3
             else
                 ONCHANGE="commit"
@@ -338,7 +338,7 @@ get_new_release() {
     if [[ $FETCH == "true" ]]; then
         return;
     fi
-    print_status_msg "Getting latest release now"
+    log status "Getting latest release now"
 
     # Check if branch is on dev branch
     # If so, exit 
@@ -354,7 +354,7 @@ get_new_release() {
 
 clean_repository() {
     # Stash changes
-    print_status_msg "Stashing changes"
+    log status "Stashing changes"
     git_stash "clear"
     git_stash "u"
 
@@ -362,7 +362,7 @@ clean_repository() {
     get_new_release
     
     # Add changes back
-    print_status_msg "Finished updating, adding changes back"
+    log status "Finished updating, adding changes back"
 
     # Switching to dev branch to add changes
     checkout_branch "devops" "$DEVBRANCH" "true"
@@ -376,28 +376,26 @@ clean_repository() {
         # Push changes back to dev branch
         push_branch "devops" "$DEVBRANCH"
     else
-        print_error_msg "Changes on server, soft error selected. Release is pulled, changes are popped back, branch is waiting user intervention."
+        log error "Changes on server, soft error selected. Release is pulled, changes are popped back, branch is waiting user intervention."
         error3
     fi
 
-    print_status_msg "Changes on the WordPress site have been commited, and were pushed to $DEVBRANCH branch"
+    log status "Changes on the WordPress site have been commited, and were pushed to $DEVBRANCH branch"
 }
 
 ## Print messages in colored text
-
-### Greeen status message usually signifying success
-print_status_msg() {
-    printf "\033[32m%s\n" "$1"
-}
-
-### Yellow message usually signifying a warning message of some kind
-print_warning_msg() {
-    printf "\033[33m%s\n" "$1"
-}
-
-### Red message idicate that there was an error an action should be taken
-print_error_msg() {
-    printf "\033[31m%s\n" "$1"
+log() {
+    case "$1" in
+        # Greeen status message usually signifying success
+        status) tput setaf 2 ;;
+        # Yellow message usually signifying a warning message of some kind
+        warning) tput setaf 3 ;;
+        # Red indicates an error and action should be taken
+        error) tput setaf 1 ;;
+        # Called log with something other than status|warning|error
+        *) log error "Internal error: invalid log level"; exit 1 ;;
+    esac
+    echo "$2"
 }
 
 # Methods and properties set, now start script logic models
@@ -411,10 +409,10 @@ add_or_remove_devops "add"
 
 if [[ $DIRTYBRANCH == "false" ]] ; then
     # Working directory clean
-    print_status_msg "Working directory clean"
+    log status "Working directory clean"
     get_new_release
 else 
-    print_warning_msg "Uncommitted changes! Starting to clean..."
+    log warning "Uncommitted changes! Starting to clean..."
     clean_repository
 fi
 
