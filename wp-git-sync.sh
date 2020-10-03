@@ -59,7 +59,7 @@ while :; do
             ;;
         -m|--message) #optional
             if [[ $2 ]]; then
-                MESSAGE=$2
+                MESSAGE="$2"
                 shift
             else
                 ERRORMESSAGES="ERROR: '-m | --message' requires a non-empty option argument."
